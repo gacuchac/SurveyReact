@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import ConnectApi from "../api/ConnectApi";
 import Header from "./framework/Header";
 import Footer from "./framework/Footer";
+import axios from 'axios';
 
 // MaterialUI
 import Button from "@material-ui/core/Button";
@@ -120,44 +121,59 @@ export const Survey = () => {
   const classes = useStyles();
   const { title } = useParams();
   const API_URL = "http://127.0.0.1:8000/survey/" + title + "/";
+  const API_URL_POST = "http://127.0.0.1:8000/survey/reply/create/";
   const [dataState] = ConnectApi(API_URL);
   const a = dataState.data.flatMap((q) => q.answer);
   const ac = a.length;
+  const qty = dataState.data.length;
   const [colors, setColors] = useState({});
-  const [answer, setAnswer] = useState({});
+  let [answer, setAnswer] = useState({});
   const [comment, setComment] = useState("");
+  const [currentquestion, setCurrentquestion] = useState();
+  
 
   useEffect(() => {
     if (Object.keys(answer).length === 0) {
       setAnswer(createInitalAnswers());
       setColors(createInitalColors());
+      setCurrentquestion(createInitialCurrent());
     }
   }, [answer]);
 
-  const handleSelection = (e, id) => {
-      if (answer[id].ans){
-        setAnswer({ ...answer, [id]: {ans:!answer[id].ans, colr:'white'} });
-        setColors({...colors, [id]:'white'})
-      }
-      else {
-        setAnswer({ ...answer, [id]: {ans:!answer[id].ans, colr:'red'} });
-        setColors({...colors, [id]:'red'})
-      }
+  const handleSelection = (e, id,i) => { 
       
-    
+      let answercopy = {...answer};
+      let colorscopy = {...colors}
+      for (const ans in answercopy[i]){
+          answercopy[i][ans] = false;
+          colorscopy[ans] = 'white'
+          if (ans == id) {
+            colorscopy[ans] = 'blue'
+          }
+          
+      }
+      answercopy[i][id] = true;
+      setAnswer(answercopy)
+      setColors(colorscopy)
+      
   };
-  console.log(answer, colors, comment)
 
-  const handleComment = (e) =>{
-      setComment(e.target.value)
+  console.log(answer, colors, currentquestion)
+
+  const handleComment = (e ,i) =>{
+      setComment({ ...comment, [i]: e.target.value});
   };
 
 
   const createInitalAnswers = () => {
-    let z = a.flatMap((obj) => obj.id);
     var object = {};
-    for (var x = 0; x < ac; x++) {
-      object[z[x]] = {ans:false, colr:'white'};
+
+    for (const i in dataState.data){
+        let z = dataState.data[i]['answer'].flatMap((obj) => obj.id);
+        object[i] = {}
+        for (var x = 0; x < z.length; x++) {
+            object[i][z[x]] = false;
+        }
     }
     return object;
   };
@@ -171,12 +187,38 @@ export const Survey = () => {
     return object;
   };
 
-  function refreshPage() {
-    window.location.reload(false);
+  const createInitialCurrent = () => {
+      return 0
+  }
+
+  const nextQuestion = (i) => {
+      console.log("Next")
+      for (const ans in answer[i]){
+          if(answer[i][ans]){
+              console.log("ans: " + answer[i][ans])
+              setCurrentquestion(currentquestion+1);
+          }
+          else {
+              //window.alert("Debe seleccionar 1 alternativa");
+          }
+      }
   }
 
   const submitAnswer = () => {
+      console.log(answer, comment);
+      const l = dataState.data.length;
+      let k = 0;
+      for (const i in answer) {
+          for ( const ans in answer[i]) {
+              if (answer[i][ans]) {
+                const body = {"answer": ans, "comment":comment[k]}
+                console.log(body)
+                k++;
+                axios.post(API_URL_POST,body)
 
+              }
+          }
+      }
   }
 
   
@@ -186,59 +228,75 @@ export const Survey = () => {
       <Container component="main" maxWidth="sm">
         <div className={classes.paper}>
           {dataState.data.map(({ title, answer }, i) => (
-            <div key={i}>
-              <Typography component="h1" variant="h5">
-                {title}
-              </Typography>
+            <Container key={i}>
+                { i==currentquestion &&
+                <Container key={i}>
+                    <Typography component="h1" variant="h5">
+                        {title}
+                    </Typography>
 
-              { answer.map(({id, image_url}) => (
-                    <ButtonBase
-                    focusRipple
-                    key={id}
-                    className={classes.image}
-                    focusVisibleClassName={classes.focusVisible}
-                    style={{
-                        width: '50%',
-                        borderColor: `${colors[id]}`
-                      }}
-                      
-                    >
-                    <span
-                        className={classes.imageSrc}
+                    { answer.map(({id, image_url}) => (
+                        <ButtonBase
+                        focusRipple
+                        key={id}
+                        className={classes.image}
+                        focusVisibleClassName={classes.focusVisible}
                         style={{
-                        backgroundImage: `url(${image_url})`,
-                        }}
-                        value={id}
-                        onClick={(e) => handleSelection(e, id, answer[id])}
+                            width: '50%',
+                            borderColor: `${colors[id]}`
+                        }}>
+                            <span
+                            className={classes.imageSrc}
+                            style={{
+                            backgroundImage: `url(${image_url})`,
+                            }}
+                            value={id}
+                            onClick={(e) => handleSelection(e, id,i)}
+                            />
+                        </ButtonBase>
+                        
+                    ))} 
 
+                    <TextField 
+                    id="outlined-basic" 
+                    label="Comments" 
+                    variant="outlined" 
+                    fullWidth
+                    multiline
+                    rows={4}
+                    value = {comment[i]}
+                    onChange={(e) => handleComment(e,i)}
                     />
-                    </ButtonBase>
-                
-                ))} 
+                    {currentquestion<qty &&
+                    <Button
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={nextQuestion(i)}
+                    >
+                    Next Question
+                    </Button>
+                    }
 
-              <TextField 
-              id="outlined-basic" 
-              label="Comments" 
-              variant="outlined" 
-              fullWidth
-              multiline
-              rows={4}
-              value = {comment}
-              onChange={handleComment}
-              />
-            </div>
+                    {currentquestion==qty &&
+                    <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={submitAnswer}
+                    >
+                    Submit Answer
+                    </Button>
+                    }
+                    </Container>
+                    
+                        }
+            </Container>
           ))}
         </div>
-        <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={submitAnswer}
-            >
-            Submit Answer
-        </Button>
       </Container>
       <Footer />
     </React.Fragment>
