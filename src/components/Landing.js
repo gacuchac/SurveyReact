@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const SurveySelect = () => {
+export const Landing = () => {
   const classes = useStyles();
   const API_URL = "http://127.0.0.1:8000/survey/";
   const [dataState] = ConnectApi(API_URL);
@@ -128,4 +128,4 @@ export const SurveySelect = () => {
   );
 };
 
-export default SurveySelect;
+export default Landing;
