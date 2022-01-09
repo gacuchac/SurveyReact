@@ -7,7 +7,6 @@ import axios from 'axios';
 
 // MaterialUI
 import Button from "@material-ui/core/Button";
-import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { Alert, AlertTitle } from "@material-ui/lab";
@@ -130,44 +129,22 @@ export const Survey = () => {
   let [answer, setAnswer] = useState({});
   const [comment, setComment] = useState("");
   const [currentquestion, setCurrentquestion] = useState();
+  const [alert, setAlert] = useState();
   
 
   useEffect(() => {
     if (Object.keys(answer).length === 0) {
       setAnswer(createInitalAnswers());
       setColors(createInitalColors());
-      setCurrentquestion(createInitialCurrent());
+      setCurrentquestion(0);
+      setAlert(createInitialAlert());
     }
   }, [answer]);
 
-  const handleSelection = (e, id,i) => { 
-      
-      let answercopy = {...answer};
-      let colorscopy = {...colors}
-      for (const ans in answercopy[i]){
-          answercopy[i][ans] = false;
-          colorscopy[ans] = 'white'
-          if (ans == id) {
-            colorscopy[ans] = 'blue'
-          }
-          
-      }
-      answercopy[i][id] = true;
-      setAnswer(answercopy)
-      setColors(colorscopy)
-      
-  };
-
-  console.log(answer, colors, currentquestion)
-
-  const handleComment = (e ,i) =>{
-      setComment({ ...comment, [i]: e.target.value});
-  };
-
+  console.log(answer, colors, "alert: " + alert)
 
   const createInitalAnswers = () => {
     var object = {};
-
     for (const i in dataState.data){
         let z = dataState.data[i]['answer'].flatMap((obj) => obj.id);
         object[i] = {}
@@ -187,28 +164,61 @@ export const Survey = () => {
     return object;
   };
 
-  const createInitialCurrent = () => {
-      return 0
-  }
+  const createInitialAlert = () => {
+    var object = {};
+    for (var x = 0; x<qty; x++){
+      object[x] = false;
+    }
+    return object
+  };
+
+  const handleSelection = (e, id,i) => {   
+      let answercopy = {...answer};
+      let colorscopy = {...colors}
+      for (const ans in answercopy[i]){
+          answercopy[i][ans] = false;
+          colorscopy[ans] = 'white'
+          if (ans == id) {
+            colorscopy[ans] = 'blue'
+          } 
+      }
+      answercopy[i][id] = true;
+      setAnswer(answercopy)
+      setColors(colorscopy)
+  };
+
+  const handleComment = (e ,i) =>{
+      setComment({ ...comment, [i]: e.target.value});
+  };
 
   const nextQuestion = (i) => {
-      console.log("Next")
+    setAlert(false);
       for (const ans in answer[i]){
           if(answer[i][ans]){
-              console.log("ans: " + answer[i][ans])
               setCurrentquestion(currentquestion+1);
           }
           else {
-              //window.alert("Debe seleccionar 1 alternativa");
+            console.log("else alert true")
+              setAlert({...alert, [i]:true});
           }
       }
-  }
+  };
 
-  const submitAnswer = () => {
-      console.log(answer, comment);
-      const l = dataState.data.length;
+  const submitAnswer = (i) => {
+      console.log("submit");
+      let sub = false;
+      for (const ans in answer[i]){
+        if(answer[i][ans]){
+            console.log("ans: " + answer[i][ans])
+            sub = true;
+        }
+        else {
+          setAlert({...alert, [i]:true});
+        }
+    }
       let k = 0;
-      for (const i in answer) {
+      if (sub) {
+        for (const i in answer) {
           for ( const ans in answer[i]) {
               if (answer[i][ans]) {
                 const body = {"answer": ans, "comment":comment[k]}
@@ -216,10 +226,11 @@ export const Survey = () => {
                 k++;
                 axios.post(API_URL_POST,body)
 
-              }
+            }
           }
-      }
-  }
+        }  
+      }  
+  };
 
   
   return (
@@ -229,7 +240,7 @@ export const Survey = () => {
         <div className={classes.paper}>
           {dataState.data.map(({ title, answer }, i) => (
             <Container key={i}>
-                { i==currentquestion &&
+                { i===currentquestion &&
                 <Container key={i}>
                     <Typography component="h1" variant="h5">
                         {title}
@@ -267,26 +278,32 @@ export const Survey = () => {
                     value = {comment[i]}
                     onChange={(e) => handleComment(e,i)}
                     />
-                    {currentquestion<qty &&
+                    {alert[i] &&
+                    <Alert severity="error">
+                    <AlertTitle>Error</AlertTitle>
+                    Debe seleccionar 1 alternativa — <strong>Revisar!</strong>
+                   </Alert> 
+                    }
+                    {currentquestion<qty-1 &&
                     <Button
                     fullWidth
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    onClick={nextQuestion(i)}
+                    onClick={() => nextQuestion(i)}
                     >
                     Next Question
                     </Button>
                     }
 
-                    {currentquestion==qty &&
+                    {currentquestion===qty-1 &&
                     <Button
                     type="submit"
                     fullWidth
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    onClick={submitAnswer}
+                    onClick={() => submitAnswer(i)}
                     >
                     Submit Answer
                     </Button>
