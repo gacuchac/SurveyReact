@@ -7,6 +7,7 @@ import Link from "@material-ui/core/Link";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
+import { Card, ListItem } from "@material-ui/core";
 //
 
 const useStyles = makeStyles((theme) => ({
@@ -27,7 +28,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
       <Link color="inherit" href="#">
-        Your Website
+      https://ciudades.imfd.cl/
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -35,8 +36,16 @@ function Copyright() {
   );
 }
 
+const openIMFD = () => {
+  window.open('https://imfd.cl/', "_blank")
+}
+
 const footers = [
   {
+    title: "IMFD",
+    description: [{text:"Instituto Milenio Fundamento de los Datos", ref:'https://imfd.cl/'}],
+  },
+  /* {
     title: "Company",
     description: ["Team", "History", "Contact us", "Locations"],
   },
@@ -62,9 +71,9 @@ const footers = [
   {
     title: "Legal",
     description: ["Privacy policy", "Terms of use"],
-  },
+  }, */
 ];
-
+console.log(footers)
 export default function Header() {
   const classes = useStyles();
 
@@ -74,15 +83,22 @@ export default function Header() {
       <Container maxWidth="md" component="footer" className={classes.footer}>
         <Grid container spacing={4} justifyContent="space-evenly">
           {footers.map((footer) => (
-            <Grid item xs={6} sm={3} key={footer.title}>
+            <Grid item xs={6} sm={10} key={footer.title}>
               <Typography variant="h6" color="textPrimary" gutterBottom>
                 {footer.title}
               </Typography>
               <ul>
                 {footer.description.map((item) => (
-                  <li key={item}>
-                    <Link href="#" variant="subtitle1" color="textSecondary">
-                      {item}
+                  <li>
+                    <Link 
+                    onClick={() => openIMFD()}
+                    variant="subtitle1" 
+                    color="textSecondary"
+                    style={{
+                      cursor: 'pointer'
+                    }}
+                    >
+                      {item.text}
                     </Link>
                   </li>
                 ))}

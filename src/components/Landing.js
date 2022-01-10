@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./framework/Header";
 import Footer from "./framework/Footer";
 import ConnectApi from "../api/ConnectApi";
@@ -6,7 +6,6 @@ import ConnectApi from "../api/ConnectApi";
 // MaterialUI
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -14,6 +13,10 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { Checkbox, FormControlLabel, FormGroup, Slider } from "@material-ui/core";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   "@global": {
@@ -56,6 +59,38 @@ export const Landing = () => {
   const classes = useStyles();
   const API_URL = "http://127.0.0.1:8000/survey/";
   const [dataState] = ConnectApi(API_URL);
+  const [surveys, setSurveys] = useState([]);
+  const [chosenSurvey, setChosensurvey] = useState("");
+  const [alert, setAlert] = useState(false);
+  const [redirect, setRedirect] = useState("");
+
+  useEffect(() => {
+    if (Object.keys(surveys).length === 0) {
+      setSurveys(createInitialsurveys());
+    }
+  }, [surveys]);
+  
+  const createInitialsurveys = () => {
+    var object = []
+    dataState.data.map((q, i) => (object.push(q.title)))
+
+    return object
+  };
+
+  const chooseSurvey = (val) => {
+    setChosensurvey(val);
+    setRedirect("http://127.0.0.1:3000/survey/" + val);
+  };
+
+  const startSurvey = () => {
+    console.log("alert: " + alert)
+    setAlert(false)
+    if (chosenSurvey == '') {
+      setAlert(true);
+    }
+  };
+
+  console.log("chosen: " + chosenSurvey,"redirect : " + redirect)
 
   return (
     <React.Fragment>
@@ -68,7 +103,7 @@ export const Landing = () => {
           color="textPrimary"
           gutterBottom
         >
-          Surveys
+          Encuesta Segmentación de Santiago
         </Typography>
         <Typography
           variant="h5"
@@ -76,53 +111,71 @@ export const Landing = () => {
           color="textSecondary"
           component="p"
         >
-          We've got all the surveys you love to binge! The world's largest
-          selection of surveys. Choose from 1+ surveys with new additions
-          published every month
+          En el Instituto Milenio Fundamentos de los Datos (IMFD) estamos buscando la mejor manera de segmentar
+          tu barrio. Ayúdanos respondiendo esta breve encuesta!!!
         </Typography>
       </Container>
-      <Container maxWidth="md" component="main">
-        <Grid container spacing={5} alignItems="flex-end">
-          {dataState.data.map((q) => (
-            <Grid item key={q.title} xs={12} md={4}>
-              <Card>
-                <CardHeader
-                  title={q.title}
-                  titleTypographyProps={{ align: "center" }}
-                  subheaderTypographyProps={{ align: "center" }}
-                  className={classes.cardHeader}
-                />
-                <CardContent>
-                  <div className={classes.cardPricing}>
-                    <Typography component="h2" variant="h6" color="textPrimary">
-                      Random Survey
-                    </Typography>
-                  </div>
-                  <ul>
-                    <Typography
-                      component="li"
-                      variant="subtitle1"
-                      align="center"
-                    >
-                      50 questions
-                    </Typography>
-                  </ul>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    color="primary"
-                    href={"http://127.0.0.1:3000/survey/" + q.title}
-                  >
-                    Start Survey
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
+      <Grid container spacing={3} >
+        <Grid item xs={4}>
+          <Autocomplete
+          disablePortal
+          id="comunas"
+          options={surveys}
+          sx={{ width: '30%' }}
+          renderInput={(params) => <TextField {...params} label="¿En qué comuna desea participar?" />}
+          onChange={(e, value) => chooseSurvey(value)}
+          />
         </Grid>
+        
+        <Grid item xs={4}>
+          <Typography id="discrete-slider" gutterBottom>
+          En una escala de 0 a 10
+          ¿Qué tanto conoces esa comuna?
+          </Typography>
+          <Slider
+            defaultValue={5}
+            //getAriaValueText={}
+            aria-labelledby="discrete-slider"
+            style={{width: "14px !important",}}
+            
+            valueLabelDisplay="on"
+            step={1}
+            marks={true}
+            min={0}
+            max={10}
+          />
+        </Grid>
+        <Grid item xs={4}>
+        <Typography gutterBottom>
+          ¿Por qué escogió esta comuna?
+          </Typography>
+          <FormGroup>
+            <FormControlLabel control={<Checkbox />} label="Vivo actualmente en dicha comuna" />
+            <FormControlLabel control={<Checkbox />} label="Viví en dicha comuna" />
+            <FormControlLabel control={<Checkbox />} label="Trabajo en dicha comuna" />
+            <FormControlLabel control={<Checkbox />} label="Otro" />
+          </FormGroup>
+        </Grid>
+      </Grid>
+      <Container>
+        <CardActions>
+          <Button
+            fullWidth
+            variant="outlined"
+            color="primary"
+            onClick={() => startSurvey()}
+            href={redirect}
+          >
+            Comenzar Encuesta
+          </Button>
+        </CardActions>
+        {alert &&
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          Debe seleccionar 1 comuna — <strong>Revisar!</strong>
+        </Alert>}
       </Container>
+      
       <Footer />
     </React.Fragment>
   );
