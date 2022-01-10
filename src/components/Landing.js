@@ -78,7 +78,7 @@ export const Landing = () => {
 
   const chooseSurvey = (val) => {
     setChosensurvey(val);
-    setRedirect("./survey/" + val);
+    setRedirect("./respond/" + val);
   };
 
   const startSurvey = () => {

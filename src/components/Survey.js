@@ -135,6 +135,7 @@ export const Survey = () => {
   const [alert, setAlert] = useState();
   const [finalComment, setFinalcomment] = useState("");
   
+  console.log(dataState.data)
 
   useEffect(() => {
     if (Object.keys(answer).length === 0) {
