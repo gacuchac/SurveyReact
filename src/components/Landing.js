@@ -109,7 +109,7 @@ export const Landing = () => {
           component="p"
         >
           En el Instituto Milenio Fundamentos de los Datos (IMFD) estamos buscando la mejor manera de segmentar
-          tu barrio. Ayúdanos respondiendo esta breve encuesta!!!
+          tu barrio. Ayúdanos respondiendo esta breve encuesta!!!!
         </Typography>
       </Container>
       <Grid container spacing={3} >
