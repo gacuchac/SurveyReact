@@ -13,7 +13,7 @@ import { Alert, AlertTitle } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import ButtonBase from '@material-ui/core/ButtonBase';
 import TextField from '@material-ui/core/TextField';
-import { Grid } from "@material-ui/core";
+import { Grid, LinearProgress } from "@material-ui/core";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -121,7 +121,7 @@ export const Survey = () => {
   const classes = useStyles();
   const { title } = useParams();
   const API_URL = "http://127.0.0.1:8000/survey/" + title + "/";
-  const API_URL_POST = "http://127.0.0.1:8000/survey/reply/create/";
+  const API_URL_POST = "http://127.0.0.1:8000/survey/reply/";
   const [dataState] = ConnectApi(API_URL);
   const a = dataState.data.flatMap((q) => q.answer);
   const ac = a.length;
@@ -132,6 +132,7 @@ export const Survey = () => {
   const [comment, setComment] = useState("");
   const [currentquestion, setCurrentquestion] = useState();
   const [alert, setAlert] = useState();
+  const [finalComment, setFinalcomment] = useState("");
   
 
   useEffect(() => {
@@ -143,8 +144,6 @@ export const Survey = () => {
       setSurveytitle(createInitialSurveytitle());
     }
   }, [answer]);
-
-  console.log(dataState.data,"surveyTitle: " + surveyTitle,answer, colors, "alert: " + alert)
   
   const createInitialSurveytitle = () => {
     var object = "";
@@ -206,6 +205,10 @@ export const Survey = () => {
       setComment({ ...comment, [i]: e.target.value});
   };
 
+  const handleFinalcomment = (e) =>{
+    setFinalcomment(e.target.value);
+};
+
   const nextQuestion = (i) => {
     setAlert(false);
       for (const ans in answer[i]){
@@ -219,10 +222,10 @@ export const Survey = () => {
       }
   };
 
-  const submitAnswer = (i) => {
-      console.log("submit");
+  const submitAnswer = () => {
+      let i = qty-1;
       let sub = false;
-      for (const ans in answer[i]){
+      for (const ans in answer[qty-1]){
         if(answer[i][ans]){
             console.log("ans: " + answer[i][ans])
             sub = true;
@@ -239,11 +242,15 @@ export const Survey = () => {
                 const body = {"answer": ans, "comment":comment[k]}
                 console.log(body)
                 k++;
-                axios.post(API_URL_POST,body)
-
+                axios.post(API_URL_POST + "create/",body)
             }
           }
-        }  
+        }
+        const finalBody = {"final_comment": finalComment, "survey":dataState.data[1]['survey']['id']}
+        axios.post(API_URL_POST + 'finalcomment/', finalBody)
+
+        setCurrentquestion(currentquestion + 1)
+
       }  
   };
 
@@ -260,15 +267,16 @@ export const Survey = () => {
             <Grid key={i}>
                 { i===currentquestion &&
                 <Container>
-                  <Typography component="h1" variant="h4" align="center">
-                  {title}
+                  <LinearProgress variant="buffer" value={(i+1)/(qty+1)*100} />
+                  <Typography component="h1" variant="h5" align="center">
+                  Seleccione la imágen que mejor segmenta la región mostrada.
                 </Typography>
                 <Grid key={i} container spacing={2}>
                     { answer.map(({id, image_url, answer_text}) => (
                       <Grid item xs={6} key={id}>
-                        <Typography component="h1" variant="h5" align="center">
+                        {/* <Typography component="h1" variant="h5" align="center">
                         {answer_text}
-                        </Typography>
+                        </Typography> */}
                         <ButtonBase
                         focusRipple
                         key={id}
@@ -293,7 +301,7 @@ export const Survey = () => {
 
                     <TextField 
                     id="outlined-basic" 
-                    label="Comments" 
+                    label="Puede comentar acá." 
                     variant="outlined" 
                     fullWidth
                     multiline
@@ -307,7 +315,7 @@ export const Survey = () => {
                     Debe seleccionar 1 alternativa — <strong>Revisar!</strong>
                    </Alert> 
                     }
-                    {currentquestion<qty-1 &&
+                    {currentquestion<qty &&
                     <Button
                     fullWidth
                     variant="contained"
@@ -318,24 +326,44 @@ export const Survey = () => {
                     Siguiente Pregunta
                     </Button>
                     }
-
-                    {currentquestion===qty-1 &&
-                    <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                    onClick={() => submitAnswer(i)}
-                    >
-                    Registrar Respuestas
-                    </Button>
-                    }
                   </Grid>
                 </Container>
                         }
             </Grid>
           ))}
+          <Container>
+          {currentquestion===qty &&
+                    <Container>
+                      <TextField 
+                      id="outlined-basic" 
+                      label="¿Algún comentario final?" 
+                      variant="outlined" 
+                      fullWidth
+                      multiline
+                      rows={4}
+                      value = {finalComment}
+                      onChange={(e) => handleFinalcomment(e)}
+                      />
+                      <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit}
+                      onClick={() => submitAnswer()}
+                      >
+                      Registrar Respuestas
+                      </Button>
+                    </Container>
+                    }
+          </Container>
+          <Container>
+            {currentquestion === qty+1 &&
+            <Typography component="h1" variant="h5" align="center">
+            Muchas gracias por su participación
+            </Typography>
+            }
+          </Container>
         </div>
       </Container>
       <Footer />
