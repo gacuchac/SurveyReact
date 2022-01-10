@@ -120,8 +120,9 @@ const useStyles = makeStyles((theme) => ({
 export const Survey = () => {
   const classes = useStyles();
   const { title } = useParams();
-  const API_URL = "http://127.0.0.1:8000/survey/" + title + "/";
-  const API_URL_POST = "http://127.0.0.1:8000/survey/reply/";
+  const ROOT_API_URL = process.env.REACT_APP_ROOT_API_URL;
+  const API_URL = ROOT_API_URL + "survey/" + title + "/";
+  const API_URL_POST = ROOT_API_URL + "survey/reply/";
   const [dataState] = ConnectApi(API_URL);
   const a = dataState.data.flatMap((q) => q.answer);
   const ac = a.length;

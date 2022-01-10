@@ -54,12 +54,14 @@ const useStyles = makeStyles((theme) => ({
 
 export const Landing = () => {
   const classes = useStyles();
-  const API_URL = "http://127.0.0.1:8000/survey/";
-  const [dataState] = ConnectApi(API_URL);
+  const ROOT_API_URL = process.env.REACT_APP_ROOT_API_URL;
+  const API_URL_SURVEY = "survey/";
+  const [dataState] = ConnectApi(ROOT_API_URL + API_URL_SURVEY);
   const [surveys, setSurveys] = useState([]);
   const [chosenSurvey, setChosensurvey] = useState("");
   const [alert, setAlert] = useState(false);
   const [redirect, setRedirect] = useState("");
+  
 
   useEffect(() => {
     if (Object.keys(surveys).length === 0) {
@@ -76,18 +78,15 @@ export const Landing = () => {
 
   const chooseSurvey = (val) => {
     setChosensurvey(val);
-    setRedirect("http://127.0.0.1:3000/survey/" + val);
+    setRedirect("./survey/" + val);
   };
 
   const startSurvey = () => {
-    console.log("alert: " + alert)
     setAlert(false)
     if (chosenSurvey == '') {
       setAlert(true);
     }
   };
-
-  console.log("chosen: " + chosenSurvey,"redirect : " + redirect)
 
   return (
     <React.Fragment>
@@ -109,7 +108,7 @@ export const Landing = () => {
           component="p"
         >
           En el Instituto Milenio Fundamentos de los Datos (IMFD) estamos buscando la mejor manera de segmentar
-          tu barrio. Ayúdanos respondiendo esta breve encuesta!!!!
+          tu barrio. Ayúdanos respondiendo esta breve encuesta!!!
         </Typography>
       </Container>
       <Grid container spacing={3} >
