@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import ConnectApi from "../api/ConnectApi";
-import Header from "./framework/Header";
-import Footer from "./framework/Footer";
 import axios from 'axios';
 
 // MaterialUI
@@ -117,11 +114,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Survey = () => {
+export const Survey = ({survey, setSurvey}) => {
   const classes = useStyles();
-  const { title } = useParams();
+  //const { title } = useParams();
   const ROOT_API_URL = process.env.REACT_APP_ROOT_API_URL;
-  const API_URL = ROOT_API_URL + "survey/" + title + "/";
+  const API_URL = ROOT_API_URL + "survey/" + survey + "/";
   const API_URL_POST = ROOT_API_URL + "survey/reply/";
   const [dataState] = ConnectApi(API_URL);
   const a = dataState.data.flatMap((q) => q.answer);
@@ -134,8 +131,6 @@ export const Survey = () => {
   const [currentquestion, setCurrentquestion] = useState();
   const [alert, setAlert] = useState();
   const [finalComment, setFinalcomment] = useState("");
-  
-  console.log(dataState.data)
 
   useEffect(() => {
     if (Object.keys(answer).length === 0) {
@@ -145,7 +140,7 @@ export const Survey = () => {
       setAlert(createInitialAlert());
       setSurveytitle(createInitialSurveytitle());
     }
-  }, [answer]);
+  });
   
   const createInitialSurveytitle = () => {
     var object = "";
@@ -242,12 +237,12 @@ export const Survey = () => {
           for ( const ans in answer[i]) {
               if (answer[i][ans]) {
                 const body = {"answer": ans, "comment":comment[k]}
-                console.log(body)
                 k++;
                 axios.post(API_URL_POST + "create/",body)
             }
           }
         }
+        
         const finalBody = {"final_comment": finalComment, "survey":dataState.data[1]['survey']['id']}
         axios.post(API_URL_POST + 'finalcomment/', finalBody)
 
@@ -256,10 +251,9 @@ export const Survey = () => {
       }  
   };
 
-  
   return (
     <React.Fragment>
-      <Header />
+      {/* <Header /> */}
       <Container component="main" maxWidth="sm">
         <div className={classes.paper}>
         <Typography component="h1" variant="h3" align="center">
@@ -368,7 +362,7 @@ export const Survey = () => {
           </Container>
         </div>
       </Container>
-      <Footer />
+      {/* <Footer /> */}
     </React.Fragment>
   );
 };

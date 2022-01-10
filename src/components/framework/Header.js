@@ -1,6 +1,5 @@
-import { AppBar, Toolbar, Typography, Card } from "@material-ui/core";
+import { AppBar, Toolbar, } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,18 +16,15 @@ export default function Header() {
     <div className={classes.root}>
       <AppBar position="static" color="default" elevation={0}>
         <Toolbar>
-        <Link to="/" className="btn btn-primary">
           <img
+          alt="IMFD"
           src={'https://imfd.cl/wp-content/themes/understrap-child/images/header-logo-es.png'}
           style={{
             width: '20%',
             cursor: 'pointer'
           }}
-          />
-
-          </Link>
-          
-          
+          onClick={() => (window.location.reload())}
+          />          
         </Toolbar>
       </AppBar>
     </div>

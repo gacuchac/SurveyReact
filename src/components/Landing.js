@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "./framework/Header";
 import Footer from "./framework/Footer";
 import ConnectApi from "../api/ConnectApi";
+import Survey from "./Survey";
 
 // MaterialUI
 import Container from "@material-ui/core/Container";
@@ -60,7 +61,8 @@ export const Landing = () => {
   const [surveys, setSurveys] = useState([]);
   const [chosenSurvey, setChosensurvey] = useState("");
   const [alert, setAlert] = useState(false);
-  const [redirect, setRedirect] = useState("");
+  //const [redirect, setRedirect] = useState("");
+  const [landing, setLanding] = useState(true);
   
 
   useEffect(() => {
@@ -78,10 +80,11 @@ export const Landing = () => {
 
   const chooseSurvey = (val) => {
     setChosensurvey(val);
-    setRedirect("./respond/" + val);
-  };
+    //setRedirect("./respond/" + val);
+  }; 
 
   const startSurvey = () => {
+    setLanding(false)
     setAlert(false)
     if (chosenSurvey == '') {
       setAlert(true);
@@ -91,6 +94,8 @@ export const Landing = () => {
   return (
     <React.Fragment>
       <Header />
+      { landing &&
+      <Container>
       <Container maxWidth="sm" component="main" className={classes.heroContent}>
         <Typography
           component="h1"
@@ -160,7 +165,7 @@ export const Landing = () => {
             variant="outlined"
             color="primary"
             onClick={() => startSurvey()}
-            href={redirect}
+            //href={redirect}
           >
             Comenzar Encuesta
           </Button>
@@ -171,6 +176,9 @@ export const Landing = () => {
           Debe seleccionar 1 comuna — <strong>Revisar!</strong>
         </Alert>}
       </Container>
+      </Container>
+      }
+      {!landing && <Survey survey={chosenSurvey}/>}
       
       <Footer />
     </React.Fragment>
