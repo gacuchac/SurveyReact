@@ -13,6 +13,7 @@ import { Alert, AlertTitle } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import ButtonBase from '@material-ui/core/ButtonBase';
 import TextField from '@material-ui/core/TextField';
+import { Grid } from "@material-ui/core";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -125,6 +126,7 @@ export const Survey = () => {
   const a = dataState.data.flatMap((q) => q.answer);
   const ac = a.length;
   const qty = dataState.data.length;
+  const [surveyTitle, setSurveytitle] = useState("");
   const [colors, setColors] = useState({});
   let [answer, setAnswer] = useState({});
   const [comment, setComment] = useState("");
@@ -138,12 +140,25 @@ export const Survey = () => {
       setColors(createInitalColors());
       setCurrentquestion(0);
       setAlert(createInitialAlert());
+      setSurveytitle(createInitialSurveytitle());
     }
   }, [answer]);
 
-  console.log(answer, colors, "alert: " + alert)
+  console.log(dataState.data,"surveyTitle: " + surveyTitle,answer, colors, "alert: " + alert)
+  
+  const createInitialSurveytitle = () => {
+    var object = "";
+    try {
+      object = dataState.data[1]['survey']['title']
+    }
+    catch {
+      object = ""
+    }
+    return object
+  }
 
   const createInitalAnswers = () => {
+    
     var object = {};
     for (const i in dataState.data){
         let z = dataState.data[i]['answer'].flatMap((obj) => obj.id);
@@ -238,33 +253,41 @@ export const Survey = () => {
       <Header />
       <Container component="main" maxWidth="sm">
         <div className={classes.paper}>
+        <Typography component="h1" variant="h3" align="center">
+          {surveyTitle}
+        </Typography>
           {dataState.data.map(({ title, answer }, i) => (
-            <Container key={i}>
+            <Grid key={i}>
                 { i===currentquestion &&
-                <Container key={i}>
-                    <Typography component="h1" variant="h5">
-                        {title}
-                    </Typography>
-
-                    { answer.map(({id, image_url}) => (
+                <Container>
+                  <Typography component="h1" variant="h4" align="center">
+                  {title}
+                </Typography>
+                <Grid key={i} container spacing={2}>
+                    { answer.map(({id, image_url, answer_text}) => (
+                      <Grid item xs={6} key={id}>
+                        <Typography component="h1" variant="h5" align="center">
+                        {answer_text}
+                        </Typography>
                         <ButtonBase
                         focusRipple
                         key={id}
                         className={classes.image}
                         focusVisibleClassName={classes.focusVisible}
                         style={{
-                            width: '50%',
+                            width: '100%',
                             borderColor: `${colors[id]}`
                         }}>
-                            <span
-                            className={classes.imageSrc}
-                            style={{
-                            backgroundImage: `url(${image_url})`,
-                            }}
-                            value={id}
-                            onClick={(e) => handleSelection(e, id,i)}
-                            />
+                        <span
+                        className={classes.imageSrc}
+                        style={{
+                        backgroundImage: `url(${image_url})`,
+                        }}
+                        value={id}
+                        onClick={(e) => handleSelection(e, id,i)}
+                        />
                         </ButtonBase>
+                      </Grid>
                         
                     ))} 
 
@@ -279,7 +302,7 @@ export const Survey = () => {
                     onChange={(e) => handleComment(e,i)}
                     />
                     {alert[i] &&
-                    <Alert severity="error">
+                    <Alert severity="error" >
                     <AlertTitle>Error</AlertTitle>
                     Debe seleccionar 1 alternativa — <strong>Revisar!</strong>
                    </Alert> 
@@ -292,7 +315,7 @@ export const Survey = () => {
                     className={classes.submit}
                     onClick={() => nextQuestion(i)}
                     >
-                    Next Question
+                    Siguiente Pregunta
                     </Button>
                     }
 
@@ -305,13 +328,13 @@ export const Survey = () => {
                     className={classes.submit}
                     onClick={() => submitAnswer(i)}
                     >
-                    Submit Answer
+                    Registrar Respuestas
                     </Button>
                     }
-                    </Container>
-                    
+                  </Grid>
+                </Container>
                         }
-            </Container>
+            </Grid>
           ))}
         </div>
       </Container>
