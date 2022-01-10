@@ -114,7 +114,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Survey = ({survey, setSurvey}) => {
+export const Survey = ({survey, knowledge, reason}) => {
   const classes = useStyles();
   //const { title } = useParams();
   const ROOT_API_URL = process.env.REACT_APP_ROOT_API_URL;
@@ -131,6 +131,7 @@ export const Survey = ({survey, setSurvey}) => {
   const [currentquestion, setCurrentquestion] = useState();
   const [alert, setAlert] = useState();
   const [finalComment, setFinalcomment] = useState("");
+  console.log("knowledge: " + knowledge + " reason: " + reason)
 
   useEffect(() => {
     if (Object.keys(answer).length === 0) {
@@ -213,7 +214,6 @@ export const Survey = ({survey, setSurvey}) => {
               setCurrentquestion(currentquestion+1);
           }
           else {
-            console.log("else alert true")
               setAlert({...alert, [i]:true});
           }
       }
@@ -224,7 +224,6 @@ export const Survey = ({survey, setSurvey}) => {
       let sub = false;
       for (const ans in answer[qty-1]){
         if(answer[i][ans]){
-            console.log("ans: " + answer[i][ans])
             sub = true;
         }
         else {
@@ -243,7 +242,15 @@ export const Survey = ({survey, setSurvey}) => {
           }
         }
         
-        const finalBody = {"final_comment": finalComment, "survey":dataState.data[1]['survey']['id']}
+        let reasons = "";
+        for (const r in reason){
+          console.log("r: "+r, "reason[r]: "+reason[r])
+          reasons += reason[r] ? "," + r : ""
+          console.log(reason[r], reasons)
+        }
+        
+        const finalBody = {"final_comment": finalComment, "survey":dataState.data[1]['survey']['id'],
+         "reason":reasons,"knowledge_scale":knowledge}
         axios.post(API_URL_POST + 'finalcomment/', finalBody)
 
         setCurrentquestion(currentquestion + 1)

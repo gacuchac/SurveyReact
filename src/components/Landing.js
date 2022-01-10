@@ -63,6 +63,8 @@ export const Landing = () => {
   const [alert, setAlert] = useState(false);
   //const [redirect, setRedirect] = useState("");
   const [landing, setLanding] = useState(true);
+  const [knowledge, setKnowledge] = useState(5);
+  const [reason, setReason] = useState({});
   
 
   useEffect(() => {
@@ -90,6 +92,15 @@ export const Landing = () => {
       setAlert(true);
     }
   };
+
+  const handleKnowledge = (val) => {
+    setKnowledge(val)
+  }
+
+  const handleReason = (val, text) => {
+    setReason({...reason, [text]:val})
+  }
+  console.log(reason)
 
   return (
     <React.Fragment>
@@ -138,12 +149,12 @@ export const Landing = () => {
             //getAriaValueText={}
             aria-labelledby="discrete-slider"
             style={{width: "14px !important",}}
-            
             valueLabelDisplay="on"
             step={1}
             marks={true}
             min={0}
             max={10}
+            onChange={(e, value) => handleKnowledge(value)}
           />
         </Grid>
         <Grid item xs={4}>
@@ -151,10 +162,10 @@ export const Landing = () => {
           ¿Por qué escogió esta comuna?
           </Typography>
           <FormGroup>
-            <FormControlLabel control={<Checkbox />} label="Vivo actualmente en dicha comuna" />
-            <FormControlLabel control={<Checkbox />} label="Viví en dicha comuna" />
-            <FormControlLabel control={<Checkbox />} label="Trabajo en dicha comuna" />
-            <FormControlLabel control={<Checkbox />} label="Otro" />
+            <FormControlLabel control={<Checkbox onChange={(e, value) => handleReason(value,"Vivo actualmente en dicha comuna")}/>} label="Vivo actualmente en dicha comuna" />
+            <FormControlLabel control={<Checkbox onChange={(e, value) => handleReason(value, "Viví en dicha comuna")}/>} label="Viví en dicha comuna" />
+            <FormControlLabel control={<Checkbox onChange={(e, value) => handleReason(value, "Trabajo en dicha comuna")}/>} label="Trabajo en dicha comuna" />
+            <FormControlLabel control={<Checkbox onChange={(e, value) => handleReason(value, "Otro")}/>} label="Otro" />
           </FormGroup>
         </Grid>
       </Grid>
@@ -178,7 +189,7 @@ export const Landing = () => {
       </Container>
       </Container>
       }
-      {!landing && <Survey survey={chosenSurvey}/>}
+      {!landing && <Survey survey={chosenSurvey} knowledge={knowledge} reason={reason}/>}
       
       <Footer />
     </React.Fragment>
