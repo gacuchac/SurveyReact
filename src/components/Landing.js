@@ -88,8 +88,9 @@ export const Landing = () => {
   const startSurvey = () => {
     setLanding(false)
     setAlert(false)
-    if (chosenSurvey == '') {
+    if (chosenSurvey === '') {
       setAlert(true);
+      setLanding(true)
     }
   };
 
