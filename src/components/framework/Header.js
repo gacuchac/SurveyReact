@@ -15,7 +15,9 @@ export default function Header() {
   return (
     <div className={classes.root}>
       <AppBar position="static" color="default" elevation={0}>
-        <Toolbar>
+        <Toolbar  
+        className={classes.toolbarTitle}
+        >
           <img
           alt="IMFD"
           src={'https://imfd.cl/wp-content/themes/understrap-child/images/header-logo-es.png'}

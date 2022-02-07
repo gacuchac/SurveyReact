@@ -10,7 +10,7 @@ import { Alert, AlertTitle } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import ButtonBase from '@material-ui/core/ButtonBase';
 import TextField from '@material-ui/core/TextField';
-import { Grid, LinearProgress } from "@material-ui/core";
+import { Grid, LinearProgress, Modal, Box } from "@material-ui/core";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -64,7 +64,6 @@ const useStyles = makeStyles((theme) => ({
     top: 0,
     bottom: 0,
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'center',
     color: theme.palette.common.white,
   },
@@ -76,6 +75,25 @@ const useStyles = makeStyles((theme) => ({
     bottom: 0,
     backgroundSize: 'cover',
     backgroundPosition: 'center 40%',
+    
+  },
+  imageIcon: {
+    position: 'absolute',
+    right: 1,
+    bottom: '3%',
+    height: 50,
+    width: 50,
+  },
+  imageModal: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '80%',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
   },
   imageBackdrop: {
     position: 'absolute',
@@ -100,13 +118,6 @@ const useStyles = makeStyles((theme) => ({
     left: 'calc(50% - 9px)',
     transition: theme.transitions.create('opacity'),
   },
-  title: {
-    color: theme.palette.primary.light,
-  },
-  titleBar: {
-    background:
-      'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
-  },
   imageList: {
     flexWrap: 'nowrap',
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
@@ -114,9 +125,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Survey = ({survey, knowledge, reason}) => {
+export const Survey = ({ survey, knowledge, reason }) => {
   const classes = useStyles();
-  //const { title } = useParams();
   const ROOT_API_URL = process.env.REACT_APP_ROOT_API_URL;
   const API_URL = ROOT_API_URL + "survey/" + survey + "/";
   const API_URL_POST = ROOT_API_URL + "survey/reply/";
@@ -128,21 +138,22 @@ export const Survey = ({survey, knowledge, reason}) => {
   const [colors, setColors] = useState({});
   let [answer, setAnswer] = useState({});
   const [comment, setComment] = useState("");
-  const [currentquestion, setCurrentquestion] = useState();
+  const [currentquestion, setCurrentquestion] = useState(0);
   const [alert, setAlert] = useState();
   const [finalComment, setFinalcomment] = useState("");
-  console.log("knowledge: " + knowledge + " reason: " + reason)
+  const [open, setOpen] = useState(false);
+  const [enlarge, setEnlarge] = useState("");
+  const icon_src = "https://cdn0.iconfinder.com/data/icons/arrows-4-7/128/Fullscreen-Arrows-Enlarge-Maximize-Zoom-Area-512.png";
 
   useEffect(() => {
     if (Object.keys(answer).length === 0) {
       setAnswer(createInitalAnswers());
       setColors(createInitalColors());
-      setCurrentquestion(0);
       setAlert(createInitialAlert());
       setSurveytitle(createInitialSurveytitle());
     }
   });
-  
+
   const createInitialSurveytitle = () => {
     var object = "";
     try {
@@ -155,14 +166,14 @@ export const Survey = ({survey, knowledge, reason}) => {
   }
 
   const createInitalAnswers = () => {
-    
+
     var object = {};
-    for (const i in dataState.data){
-        let z = dataState.data[i]['answer'].flatMap((obj) => obj.id);
-        object[i] = {}
-        for (var x = 0; x < z.length; x++) {
-            object[i][z[x]] = false;
-        }
+    for (const i in dataState.data) {
+      let z = dataState.data[i]['answer'].flatMap((obj) => obj.id);
+      object[i] = {}
+      for (var x = 0; x < z.length; x++) {
+        object[i][z[x]] = false;
+      }
     }
     return object;
   };
@@ -178,193 +189,205 @@ export const Survey = ({survey, knowledge, reason}) => {
 
   const createInitialAlert = () => {
     var object = {};
-    for (var x = 0; x<qty; x++){
+    for (var x = 0; x < qty; x++) {
       object[x] = false;
     }
     return object
   };
 
-  const handleSelection = (e, id,i) => {   
-      let answercopy = {...answer};
-      let colorscopy = {...colors}
-      for (const ans in answercopy[i]){
-          answercopy[i][ans] = false;
-          colorscopy[ans] = 'white'
-          if (ans == id) {
-            colorscopy[ans] = 'blue'
-          } 
+  const handleSelection = (e, id, i) => {
+    let answercopy = { ...answer };
+    let colorscopy = { ...colors }
+    for (const ans in answercopy[i]) {
+      answercopy[i][ans] = false;
+      colorscopy[ans] = 'white'
+      if (ans == id) {
+        colorscopy[ans] = 'blue'
       }
-      answercopy[i][id] = true;
-      setAnswer(answercopy)
-      setColors(colorscopy)
+    }
+    answercopy[i][id] = true;
+    setAnswer(answercopy)
+    setColors(colorscopy)
   };
 
-  const handleComment = (e ,i) =>{
-      setComment({ ...comment, [i]: e.target.value});
+  const handleComment = (e, i) => {
+    setComment({ ...comment, [i]: e.target.value });
   };
 
-  const handleFinalcomment = (e) =>{
+  const handleFinalcomment = (e) => {
     setFinalcomment(e.target.value);
-};
+  };
+
+  const handleOpen = (e, image_url) => { setOpen(true); setEnlarge(image_url) };
+  const handleClose = () => setOpen(false);
 
   const nextQuestion = (i) => {
     setAlert(false);
-      for (const ans in answer[i]){
-          if(answer[i][ans]){
-              setCurrentquestion(currentquestion+1);
-          }
-          else {
-              setAlert({...alert, [i]:true});
-          }
+
+    for (const ans in answer[i]) {
+      if (answer[i][ans]) {
+        setCurrentquestion(currentquestion + 1);
+        let reasons = "";
+        for (const r in reason) {
+          reasons += reason[r] ? "," + r : ""
+        }
+        let comment_text =  comment[i] != null ? comment[i]  : ""
+        let reasons_text =  reasons != null && reasons != "" ? reasons  : "sin razón"
+        const body = {
+          "answer": ans,
+          "comment": comment_text,
+          "reason": reasons_text,
+          "knowledge_scale": knowledge,
+        }
+        console.log(body)
+        axios.post(API_URL_POST + "create/", body)
       }
+      else {
+        setAlert({ ...alert, [i]: true });
+      }
+    }
   };
 
   const submitAnswer = () => {
-      let i = qty-1;
-      let sub = false;
-      for (const ans in answer[qty-1]){
-        if(answer[i][ans]){
-            sub = true;
-        }
-        else {
-          setAlert({...alert, [i]:true});
-        }
+    const finalBody = {
+      "final_comment": finalComment, "survey": dataState.data[1]['survey']['id'],
     }
-      let k = 0;
-      if (sub) {
-        for (const i in answer) {
-          for ( const ans in answer[i]) {
-              if (answer[i][ans]) {
-                const body = {"answer": ans, "comment":comment[k]}
-                k++;
-                axios.post(API_URL_POST + "create/",body)
-            }
-          }
-        }
-        
-        let reasons = "";
-        for (const r in reason){
-          console.log("r: "+r, "reason[r]: "+reason[r])
-          reasons += reason[r] ? "," + r : ""
-          console.log(reason[r], reasons)
-        }
-        
-        const finalBody = {"final_comment": finalComment, "survey":dataState.data[1]['survey']['id'],
-         "reason":reasons,"knowledge_scale":knowledge}
-        axios.post(API_URL_POST + 'finalcomment/', finalBody)
+    axios.post(API_URL_POST + 'finalcomment/', finalBody)
 
-        setCurrentquestion(currentquestion + 1)
-
-      }  
+    setCurrentquestion(currentquestion + 1)
   };
 
   return (
     <React.Fragment>
-      {/* <Header /> */}
-      <Container component="main" maxWidth="sm">
+      <Container
+        component="main"
+        maxWidth="lg"
+      >
         <div className={classes.paper}>
-        <Typography component="h1" variant="h3" align="center">
-          {surveyTitle}
-        </Typography>
+          <Typography component="h1" variant="h3" align="center">
+            {surveyTitle}
+          </Typography>
           {dataState.data.map(({ title, answer }, i) => (
             <Grid key={i}>
-                { i===currentquestion &&
+              {i === currentquestion &&
                 <Container>
-                  <LinearProgress variant="buffer" value={(i+1)/(qty+1)*100} />
+                  <LinearProgress variant="determinate" value={(i + 1) / (qty + 1) * 100} />
                   <Typography component="h1" variant="h5" align="center">
-                  Seleccione la imágen que mejor segmenta la región mostrada.
-                </Typography>
-                <Grid key={i} container spacing={2}>
-                    { answer.map(({id, image_url, answer_text}) => (
-                      <Grid item xs={6} key={id}>
-                        {/* <Typography component="h1" variant="h5" align="center">
-                        {answer_text}
-                        </Typography> */}
-                        <ButtonBase
-                        focusRipple
+                    Seleccione la imágen que mejor segmenta la región mostrada.
+                  </Typography>
+                  <Grid key={i} container spacing={0}
+                  >
+                    {answer.map(({ id, image_url, answer_text }) => (
+                      <Grid
+                        item xs={12} md={6}
                         key={id}
-                        className={classes.image}
-                        focusVisibleClassName={classes.focusVisible}
-                        style={{
+                      >
+                        <ButtonBase
+                          focusRipple
+                          key={id}
+                          className={classes.image}
+                          focusVisibleClassName={classes.focusVisible}
+                          style={{
                             width: '100%',
+                            height: '50vh',
                             borderColor: `${colors[id]}`
-                        }}>
-                        <span
-                        className={classes.imageSrc}
-                        style={{
-                        backgroundImage: `url(${image_url})`,
-                        }}
-                        value={id}
-                        onClick={(e) => handleSelection(e, id,i)}
-                        />
+                          }}>
+                          <span
+                            className={classes.imageSrc}
+                            style={{
+                              backgroundImage: `url(${image_url})`,
+                            }}
+                            value={id}
+                            onClick={(e) => handleSelection(e, id, i)}
+                          >
+                            <img
+                              alt=""
+                              src={icon_src}
+                              className={classes.imageIcon}
+                              onClick={(e) => handleOpen(e, image_url)}
+                            />
+                          </span>
                         </ButtonBase>
+                        <Modal
+                          open={open}
+                          onClose={handleClose}
+                        >
+                          <Box>
+                            <img
+                              alt=""
+                              src={enlarge}
+                              className={classes.imageModal}
+                              onClick={handleClose}
+                            />
+                          </Box>
+                        </Modal>
                       </Grid>
-                        
-                    ))} 
 
-                    <TextField 
-                    id="outlined-basic" 
-                    label="Puede comentar acá." 
-                    variant="outlined" 
-                    fullWidth
-                    multiline
-                    rows={4}
-                    value = {comment[i]}
-                    onChange={(e) => handleComment(e,i)}
-                    />
-                    {alert[i] &&
-                    <Alert severity="error" >
-                    <AlertTitle>Error</AlertTitle>
-                    Debe seleccionar 1 alternativa — <strong>Revisar!</strong>
-                   </Alert> 
-                    }
-                    {currentquestion<qty &&
-                    <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                    onClick={() => nextQuestion(i)}
-                    >
-                    Siguiente Pregunta
-                    </Button>
-                    }
-                  </Grid>
-                </Container>
-                        }
-            </Grid>
-          ))}
-          <Container>
-          {currentquestion===qty &&
-                    <Container>
-                      <TextField 
-                      id="outlined-basic" 
-                      label="¿Algún comentario final?" 
-                      variant="outlined" 
+                    ))}
+
+                    <TextField
+                      id="outlined-basic"
+                      label="Puede comentar acá."
+                      variant="outlined"
                       fullWidth
                       multiline
                       rows={4}
-                      value = {finalComment}
-                      onChange={(e) => handleFinalcomment(e)}
-                      />
-                      <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      className={classes.submit}
-                      onClick={() => submitAnswer()}
-                      >
-                      Registrar Respuestas
-                      </Button>
-                    </Container>
+                      value={comment[i]}
+                      onChange={(e) => handleComment(e, i)}
+                    />
+                    {alert[i] &&
+                      <Alert severity="error" >
+                        <AlertTitle>Error</AlertTitle>
+                        Debe seleccionar 1 alternativa — <strong>Revisar!</strong>
+                      </Alert>
                     }
+                    {currentquestion < qty &&
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className={classes.submit}
+                        onClick={() => nextQuestion(i)}
+                      >
+                        Siguiente Pregunta
+                      </Button>
+                    }
+                  </Grid>
+                </Container>
+              }
+            </Grid>
+          ))}
+          <Container>
+            {currentquestion === qty &&
+              <Container>
+                <TextField
+                  id="outlined-basic"
+                  label="¿Algún comentario final?"
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  value={finalComment}
+                  onChange={(e) => handleFinalcomment(e)}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  onClick={() => submitAnswer()}
+                >
+                  Registrar Respuestas
+                </Button>
+              </Container>
+            }
           </Container>
           <Container>
-            {currentquestion === qty+1 &&
-            <Typography component="h1" variant="h5" align="center">
-            Muchas gracias por su participación
-            </Typography>
+            {currentquestion === qty + 1 &&
+              <Typography component="h1" variant="h5" align="center">
+                Muchas gracias por su participación
+              </Typography>
             }
           </Container>
         </div>

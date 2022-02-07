@@ -61,7 +61,6 @@ export const Landing = () => {
   const [surveys, setSurveys] = useState([]);
   const [chosenSurvey, setChosensurvey] = useState("");
   const [alert, setAlert] = useState(false);
-  //const [redirect, setRedirect] = useState("");
   const [landing, setLanding] = useState(true);
   const [knowledge, setKnowledge] = useState(5);
   const [reason, setReason] = useState({});
@@ -88,10 +87,10 @@ export const Landing = () => {
   const startSurvey = () => {
     setLanding(false)
     setAlert(false)
-    if (chosenSurvey === '') {
+    /* if (chosenSurvey === '') {
       setAlert(true);
       setLanding(true)
-    }
+     }*/
   };
 
   const handleKnowledge = (val) => {
@@ -101,7 +100,6 @@ export const Landing = () => {
   const handleReason = (val, text) => {
     setReason({...reason, [text]:val})
   }
-  console.log(reason)
 
   return (
     <React.Fragment>
@@ -125,10 +123,10 @@ export const Landing = () => {
           component="p"
         >
           En el Instituto Milenio Fundamentos de los Datos (IMFD) estamos buscando la mejor manera de segmentar
-          tu barrio. Ayúdanos respondiendo esta breve encuesta!!!
+          tu barrio. Ayúdanos respondiendo esta breve encuesta sobre la Región Metropolitana y la comuna de Santiago!!!
         </Typography>
       </Container>
-      <Grid container spacing={3} >
+     {/*  <Grid container spacing={3} >
         <Grid item xs={4}>
           <Autocomplete
           disablePortal
@@ -147,7 +145,6 @@ export const Landing = () => {
           </Typography>
           <Slider
             defaultValue={5}
-            //getAriaValueText={}
             aria-labelledby="discrete-slider"
             style={{width: "14px !important",}}
             valueLabelDisplay="on"
@@ -169,7 +166,7 @@ export const Landing = () => {
             <FormControlLabel control={<Checkbox onChange={(e, value) => handleReason(value, "Otro")}/>} label="Otro" />
           </FormGroup>
         </Grid>
-      </Grid>
+      </Grid> */}
       <Container>
         <CardActions>
           <Button
@@ -177,7 +174,6 @@ export const Landing = () => {
             variant="outlined"
             color="primary"
             onClick={() => startSurvey()}
-            //href={redirect}
           >
             Comenzar Encuesta
           </Button>
@@ -190,7 +186,9 @@ export const Landing = () => {
       </Container>
       </Container>
       }
-      {!landing && <Survey survey={chosenSurvey} knowledge={knowledge} reason={reason}/>}
+      {/* {!landing && <Survey survey={chosenSurvey} knowledge={knowledge} reason={reason}/>} */
+      !landing && <Survey survey={'Santiago'} knowledge={0} reason={''}/>
+      }
       
       <Footer />
     </React.Fragment>
