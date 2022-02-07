@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
     bottom: 0,
     backgroundSize: 'cover',
     backgroundPosition: 'center 40%',
-    
+
   },
   imageIcon: {
     position: 'absolute',
@@ -231,8 +231,8 @@ export const Survey = ({ survey, knowledge, reason }) => {
         for (const r in reason) {
           reasons += reason[r] ? "," + r : ""
         }
-        let comment_text =  comment[i] != null ? comment[i]  : ""
-        let reasons_text =  reasons != null && reasons != "" ? reasons  : "sin razón"
+        let comment_text = comment[i] != null ? comment[i] : ""
+        let reasons_text = reasons != null && reasons != "" ? reasons : "sin razón"
         const body = {
           "answer": ans,
           "comment": comment_text,
@@ -257,6 +257,8 @@ export const Survey = ({ survey, knowledge, reason }) => {
     setCurrentquestion(currentquestion + 1)
   };
 
+  console.log(dataState.data)
+
   return (
     <React.Fragment>
       <Container
@@ -264,16 +266,16 @@ export const Survey = ({ survey, knowledge, reason }) => {
         maxWidth="lg"
       >
         <div className={classes.paper}>
-          <Typography component="h1" variant="h3" align="center">
-            {surveyTitle}
-          </Typography>
           {dataState.data.map(({ title, answer }, i) => (
             <Grid key={i}>
               {i === currentquestion &&
                 <Container>
+                  <Typography component="h1" variant="h3" align="center">
+                    {dataState.data[i]['survey']['title']}
+                  </Typography>
                   <LinearProgress variant="determinate" value={(i + 1) / (qty + 1) * 100} />
                   <Typography component="h1" variant="h5" align="center">
-                    Seleccione la imágen que mejor segmenta la región mostrada.
+                    Seleccione la imagen que mejor segmenta la región mostrada.
                   </Typography>
                   <Grid key={i} container spacing={0}
                   >
