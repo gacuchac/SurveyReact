@@ -257,8 +257,6 @@ export const Survey = ({ survey, knowledge, reason }) => {
     setCurrentquestion(currentquestion + 1)
   };
 
-  console.log(dataState.data)
-
   return (
     <React.Fragment>
       <Container
