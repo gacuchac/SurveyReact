@@ -79,8 +79,8 @@ const useStyles = makeStyles((theme) => ({
   },
   imageIcon: {
     position: 'absolute',
-    right: 1,
-    bottom: '3%',
+    right: '1.5%',
+    bottom: '1%',
     height: 50,
     width: 50,
   },
