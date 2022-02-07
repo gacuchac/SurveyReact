@@ -231,7 +231,7 @@ export const Survey = ({ survey, knowledge, reason }) => {
         for (const r in reason) {
           reasons += reason[r] ? "," + r : ""
         }
-        let comment_text = comment[i] != null ? comment[i] : "sin comentario"
+        let comment_text = comment[i] != null && comment[i] != "" ? comment[i] : "sin comentario"
         let reasons_text = reasons != null && reasons != "" ? reasons : "sin razón"
         const body = {
           "answer": ans,
@@ -249,7 +249,7 @@ export const Survey = ({ survey, knowledge, reason }) => {
   };
 
   const submitAnswer = () => {
-    let comment_text = finalComment != null ? finalComment : "sin comentario final"
+    let comment_text = finalComment != null && finalComment != "" ? finalComment : "sin comentario final"
     const finalBody = {
       "final_comment": comment_text, "survey": dataState.data[1]['survey']['id'],
     }
