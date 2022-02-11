@@ -248,7 +248,7 @@ export const Survey = ({ survey, knowledge, reason }) => {
     }
   };
 
-  const submitAnswer = () => {
+  const submitAnswer = (i) => {
     let comment_text = finalComment != null && finalComment != "" ? finalComment : "sin comentario final"
     const finalBody = {
       "final_comment": comment_text, "survey": dataState.data[1]['survey']['id'],
@@ -257,6 +257,33 @@ export const Survey = ({ survey, knowledge, reason }) => {
 
     setCurrentquestion(currentquestion + 1)
   };
+
+  const finishSurvey = (i) => {
+    setAlert(false);
+
+    for (const ans in answer[i]) {
+      if (answer[i][ans]) {
+        let reasons = "";
+        for (const r in reason) {
+          reasons += reason[r] ? "," + r : ""
+        }
+        let comment_text = comment[i] != null && comment[i] != "" ? comment[i] : "sin comentario"
+        let reasons_text = reasons != null && reasons != "" ? reasons : "sin razón"
+        const body = {
+          "answer": ans,
+          "comment": comment_text,
+          "reason": reasons_text,
+          "knowledge_scale": knowledge,
+        }
+        console.log(body)
+        axios.post(API_URL_POST + "create/", body)
+        window.location.reload()
+      }
+      else {
+        setAlert({ ...alert, [i]: true });
+      }
+    }
+  }
 
   return (
     <React.Fragment>
@@ -343,6 +370,7 @@ export const Survey = ({ survey, knowledge, reason }) => {
                       </Alert>
                     }
                     {currentquestion < qty &&
+                    <Container>
                       <Button
                         fullWidth
                         variant="contained"
@@ -352,6 +380,17 @@ export const Survey = ({ survey, knowledge, reason }) => {
                       >
                         Siguiente Pregunta
                       </Button>
+                      <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit}
+                      onClick={() => finishSurvey(i)}
+                    >
+                      Finalizar Encuesta
+                    </Button>
+                    </Container>
                     }
                   </Grid>
                 </Container>
@@ -379,7 +418,7 @@ export const Survey = ({ survey, knowledge, reason }) => {
                   className={classes.submit}
                   onClick={() => submitAnswer()}
                 >
-                  Registrar Respuestas
+                  Finalizar Encuesta
                 </Button>
               </Container>
             }
