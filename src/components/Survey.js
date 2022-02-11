@@ -202,7 +202,7 @@ export const Survey = ({ survey, knowledge, reason }) => {
       answercopy[i][ans] = false;
       colorscopy[ans] = 'white'
       if (ans == id) {
-        colorscopy[ans] = 'blue'
+        colorscopy[ans] = 'green'
       }
     }
     answercopy[i][id] = true;
