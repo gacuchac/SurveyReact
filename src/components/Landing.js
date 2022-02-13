@@ -51,6 +51,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "baseline",
     marginBottom: theme.spacing(2),
   },
+  p: {
+    padding: 10
+  }
 }));
 
 export const Landing = () => {
@@ -113,17 +116,38 @@ export const Landing = () => {
           align="center"
           color="textPrimary"
           gutterBottom
+
         >
-          Encuesta Segmentación de Santiago
+          Encuesta: "Barrios de Santiago"
         </Typography>
         <Typography
-          variant="h5"
+          variant="h6"
           align="center"
           color="textSecondary"
           component="p"
+          className={classes.p}
         >
-          En el Instituto Milenio Fundamentos de los Datos (IMFD) estamos buscando la mejor manera de segmentar
-          tu barrio. Ayúdanos respondiendo esta breve encuesta sobre la Región Metropolitana y la comuna de Santiago!!!
+          Estamos buscando la mejor manera de identificar barrios. Ayúdanos respondiendo esta breve encuesta sobre la Región Metropolitana y comuna de Santiago.
+        </Typography>
+        <Typography
+          variant="h6"
+          align="center"
+          color="textSecondary"
+          component="p"
+          className={classes.p}
+        >
+          Es fácil: te vamos a mostrar dos formas de mapear la ciudad y comuna, y tú tienes que elegir la que te haga más sentido. Los barrios se identifican con colores. Cualquier comentario, consulta o sugerencia,
+          déjalos en el campo de comentarios.
+        </Typography>
+        
+        <Typography
+          variant="h6"
+          align="center"
+          color="textSecondary"
+          component="p"
+          className={classes.p}
+        >
+          Agradecemos tu participación, es de mucha ayuda. Si aún quieres seguir ayudándonos, puedes compartir la encuesta.
         </Typography>
       </Container>
      {/*  <Grid container spacing={3} >
