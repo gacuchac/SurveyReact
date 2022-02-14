@@ -312,8 +312,6 @@ export const Survey = ({ survey, reason }) => {
     setKnowledge(val)
   }
 
-  console.log('session: ' + session)
-
   return (
     <React.Fragment>
       <Container
