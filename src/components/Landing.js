@@ -211,7 +211,7 @@ export const Landing = () => {
       </Container>
       }
       {/* {!landing && <Survey survey={chosenSurvey} knowledge={knowledge} reason={reason}/>} */
-      !landing && <Survey survey={'Encuesta RM y Santiago'} knowledge={0} reason={''}/>
+      !landing && <Survey survey={'Encuesta RM y Santiago'} reason={''}/>
       }
       
       <Footer />

@@ -10,7 +10,7 @@ import { Alert, AlertTitle } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import ButtonBase from '@material-ui/core/ButtonBase';
 import TextField from '@material-ui/core/TextField';
-import { Grid, LinearProgress, Modal, Box } from "@material-ui/core";
+import { Grid, LinearProgress, Modal, Box, Slider } from "@material-ui/core";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -124,15 +124,16 @@ const useStyles = makeStyles((theme) => ({
     transform: 'translateZ(0)',
   },
   comment_block: {
-    margin: 20 
+    margin: 20
   },
   progressBar: {
     height: 50
   },
 }));
 
-export const Survey = ({ survey, knowledge, reason }) => {
+export const Survey = ({ survey, reason }) => {
   const classes = useStyles();
+  const [session, setSession] = useState(0)
   const ROOT_API_URL = process.env.REACT_APP_ROOT_API_URL;
   const API_URL = ROOT_API_URL + "survey/" + survey + "/";
   const API_URL_POST = ROOT_API_URL + "survey/reply/";
@@ -143,6 +144,7 @@ export const Survey = ({ survey, knowledge, reason }) => {
   const [surveyTitle, setSurveytitle] = useState("");
   const [colors, setColors] = useState({});
   let [answer, setAnswer] = useState({});
+  const [knowledge, setKnowledge] = useState(5);
   const [comment, setComment] = useState("");
   const [currentquestion, setCurrentquestion] = useState(0);
   const [alert, setAlert] = useState();
@@ -157,6 +159,7 @@ export const Survey = ({ survey, knowledge, reason }) => {
       setColors(createInitalColors());
       setAlert(createInitialAlert());
       setSurveytitle(createInitialSurveytitle());
+      setSession(createSession());
     }
   });
 
@@ -201,6 +204,18 @@ export const Survey = ({ survey, knowledge, reason }) => {
     return object
   };
 
+  const createSession = () => {
+    const text = Date.now().toString(36);
+    var hash = 0
+    for (let i = 0 ;i<text.length ; i++) {
+      let ch = text.charCodeAt(i);
+      hash = ((hash << 5) - hash) + ch;
+      hash = hash & hash;
+      }
+    
+      return hash
+  }
+
   const handleSelection = (e, id, i) => {
     let answercopy = { ...answer };
     let colorscopy = { ...colors }
@@ -244,8 +259,8 @@ export const Survey = ({ survey, knowledge, reason }) => {
           "comment": comment_text,
           "reason": reasons_text,
           "knowledge_scale": knowledge,
+          "session": session
         }
-        console.log(body)
         axios.post(API_URL_POST + "create/", body)
       }
       else {
@@ -257,7 +272,10 @@ export const Survey = ({ survey, knowledge, reason }) => {
   const submitAnswer = (i) => {
     let comment_text = finalComment != null && finalComment != "" ? finalComment : "sin comentario final"
     const finalBody = {
-      "final_comment": comment_text, "survey": dataState.data[1]['survey']['id'],
+      "final_comment": comment_text, 
+      "survey": dataState.data[1]['survey']['id'],
+      "certainty_sense": knowledge,
+      "session": session
     }
     axios.post(API_URL_POST + 'finalcomment/', finalBody)
 
@@ -279,9 +297,8 @@ export const Survey = ({ survey, knowledge, reason }) => {
           "answer": ans,
           "comment": comment_text,
           "reason": reasons_text,
-          "knowledge_scale": knowledge,
+          "session": session,
         }
-        console.log(body)
         axios.post(API_URL_POST + "create/", body)
         window.location.reload()
       }
@@ -290,6 +307,12 @@ export const Survey = ({ survey, knowledge, reason }) => {
       }
     }
   }
+
+  const handleKnowledge = (val) => {
+    setKnowledge(val)
+  }
+
+  console.log('session: ' + session)
 
   return (
     <React.Fragment>
@@ -305,7 +328,7 @@ export const Survey = ({ survey, knowledge, reason }) => {
                   <Typography component="h1" variant="h3" align="center">
                     {dataState.data[i]['survey']['title']}
                   </Typography>
-                  <LinearProgress variant="determinate" value={(i + 1) / (qty + 1) * 100} className={classes.progressBar}/>
+                  <LinearProgress variant="determinate" value={(i + 1) / (qty + 1) * 100} className={classes.progressBar} />
                   <Typography component="h1" variant="h5" align="center">
                     Selecciona la imagen que mejor representa los barrios de la ciudad.
                   </Typography>
@@ -377,39 +400,39 @@ export const Survey = ({ survey, knowledge, reason }) => {
                       </Alert>
                     }
                     {currentquestion < qty &&
-                    <Container>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                        onClick={() => nextQuestion(i)}
-                      >
-                        Siguiente Pregunta
-                      </Button>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                        onClick={() => setCurrentquestion(currentquestion +1)}
-                      >
-                        Omitir Pregunta
-                      </Button>
-                      <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      className={classes.submit}
-                      onClick={() => {
-                        setCurrentquestion(qty)
-                        finishSurvey(i)
-                      }}
-                    >
-                      Finalizar Encuesta
-                    </Button>
-                    </Container>
+                      <Container>
+                        <Button
+                          fullWidth
+                          variant="contained"
+                          color="primary"
+                          className={classes.submit}
+                          onClick={() => nextQuestion(i)}
+                        >
+                          Siguiente Pregunta
+                        </Button>
+                        <Button
+                          fullWidth
+                          variant="contained"
+                          color="primary"
+                          className={classes.submit}
+                          onClick={() => setCurrentquestion(currentquestion + 1)}
+                        >
+                          Omitir Pregunta
+                        </Button>
+                        <Button
+                          type="submit"
+                          fullWidth
+                          variant="contained"
+                          color="primary"
+                          className={classes.submit}
+                          onClick={() => {
+                            setCurrentquestion(qty)
+                            finishSurvey(i)
+                          }}
+                        >
+                          Finalizar Encuesta
+                        </Button>
+                      </Container>
                     }
                   </Grid>
                 </Container>
@@ -419,6 +442,21 @@ export const Survey = ({ survey, knowledge, reason }) => {
           <Container>
             {currentquestion === qty &&
               <Container>
+                <Typography id="discrete-slider" gutterBottom>
+                  En una escala de 0 a 10
+                  ¿Qué tan segur@ te sientes con tus respuestas?
+                </Typography>
+                <Slider
+                  defaultValue={5}
+                  aria-labelledby="discrete-slider"
+                  style={{ width: "14px !important", }}
+                  valueLabelDisplay="on"
+                  step={1}
+                  marks={true}
+                  min={0}
+                  max={10}
+                  onChange={(e, value) => handleKnowledge(value)}
+                />
                 <TextField
                   id="outlined-basic"
                   label="¿Algún comentario final?"
