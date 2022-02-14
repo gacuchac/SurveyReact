@@ -43,7 +43,7 @@ const openIMFD = () => {
 const footers = [
   {
     title: "IMFD",
-    description: [{text:"Instituto Milenio Fundamento de los Datos", ref:'https://imfd.cl/'}],
+    description: [{text:"Instituto Milenio Fundamentos de los Datos", ref:'https://imfd.cl/'}],
   },
   /* {
     title: "Company",

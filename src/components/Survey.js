@@ -79,8 +79,8 @@ const useStyles = makeStyles((theme) => ({
   },
   imageIcon: {
     position: 'absolute',
-    right: '3%',
-    bottom: '3%',
+    right: '1%',
+    bottom: '6%',
     height: 50,
     width: 50,
   },
@@ -122,6 +122,12 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'nowrap',
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: 'translateZ(0)',
+  },
+  comment_block: {
+    margin: 20 
+  },
+  progressBar: {
+    height: 50
   },
 }));
 
@@ -299,9 +305,9 @@ export const Survey = ({ survey, knowledge, reason }) => {
                   <Typography component="h1" variant="h3" align="center">
                     {dataState.data[i]['survey']['title']}
                   </Typography>
-                  <LinearProgress variant="determinate" value={(i + 1) / (qty + 1) * 100} />
+                  <LinearProgress variant="determinate" value={(i + 1) / (qty + 1) * 100} className={classes.progressBar}/>
                   <Typography component="h1" variant="h5" align="center">
-                    Seleccione la imagen que mejor segmenta la región mostrada.
+                    Selecciona la imagen que mejor representa los barrios de la ciudad.
                   </Typography>
                   <Grid key={i} container spacing={0}
                   >
@@ -355,18 +361,19 @@ export const Survey = ({ survey, knowledge, reason }) => {
 
                     <TextField
                       id="outlined-basic"
-                      label="Puede comentar acá."
+                      label="Puedes comentar acá."
                       variant="outlined"
                       fullWidth
                       multiline
                       rows={4}
                       value={comment[i]}
                       onChange={(e) => handleComment(e, i)}
+                      className={classes.comment_block}
                     />
                     {alert[i] &&
                       <Alert severity="error" >
                         <AlertTitle>Error</AlertTitle>
-                        Debe seleccionar 1 alternativa — <strong>Revisar!</strong>
+                        Debes seleccionar 1 alternativa.
                       </Alert>
                     }
                     {currentquestion < qty &&
@@ -381,12 +388,24 @@ export const Survey = ({ survey, knowledge, reason }) => {
                         Siguiente Pregunta
                       </Button>
                       <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className={classes.submit}
+                        onClick={() => setCurrentquestion(currentquestion +1)}
+                      >
+                        Omitir Pregunta
+                      </Button>
+                      <Button
                       type="submit"
                       fullWidth
                       variant="contained"
                       color="primary"
                       className={classes.submit}
-                      onClick={() => finishSurvey(i)}
+                      onClick={() => {
+                        setCurrentquestion(qty)
+                        finishSurvey(i)
+                      }}
                     >
                       Finalizar Encuesta
                     </Button>
