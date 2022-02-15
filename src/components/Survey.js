@@ -129,6 +129,13 @@ const useStyles = makeStyles((theme) => ({
   progressBar: {
     height: 50
   },
+
+  slider: {
+    height:24,
+    width:"100% !important",
+    borderRadius: 24,
+    opacity:1,
+  }
 }));
 
 export const Survey = ({ survey, reason }) => {
@@ -207,13 +214,13 @@ export const Survey = ({ survey, reason }) => {
   const createSession = () => {
     const text = Date.now().toString(36);
     var hash = 0
-    for (let i = 0 ;i<text.length ; i++) {
+    for (let i = 0; i < text.length; i++) {
       let ch = text.charCodeAt(i);
       hash = ((hash << 5) - hash) + ch;
       hash = hash & hash;
-      }
-    
-      return hash
+    }
+
+    return hash
   }
 
   const handleSelection = (e, id, i) => {
@@ -272,7 +279,7 @@ export const Survey = ({ survey, reason }) => {
   const submitAnswer = (i) => {
     let comment_text = finalComment != null && finalComment != "" ? finalComment : "sin comentario final"
     const finalBody = {
-      "final_comment": comment_text, 
+      "final_comment": comment_text,
       "survey": dataState.data[1]['survey']['id'],
       "certainty_sense": knowledge,
       "session": session
@@ -444,17 +451,20 @@ export const Survey = ({ survey, reason }) => {
                   En una escala de 0 a 10
                   ¿Qué tan segur@ te sientes con tus respuestas?
                 </Typography>
-                <Slider
-                  defaultValue={5}
-                  aria-labelledby="discrete-slider"
-                  style={{ width: "14px !important", }}
-                  valueLabelDisplay="on"
-                  step={1}
-                  marks={true}
-                  min={0}
-                  max={10}
-                  onChange={(e, value) => handleKnowledge(value)}
-                />
+                <Box m={2} pt={3}>
+                  <Slider
+                    defaultValue={5}
+                    aria-labelledby="discrete-slider"
+                    valueLabelDisplay="on"
+                    step={1}
+                    marks={true}
+                    min={1}
+                    max={10}
+                    className={classes.slider}
+                    lineHeight= {1000}
+                    onChange={(e, value) => handleKnowledge(value)}
+                  />
+                </Box>
                 <TextField
                   id="outlined-basic"
                   label="¿Algún comentario final?"
