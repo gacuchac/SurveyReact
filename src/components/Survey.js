@@ -126,6 +126,9 @@ const useStyles = makeStyles((theme) => ({
   comment_block: {
     margin: 20
   },
+  p: {
+    padding: 10
+  },
   progressBar: {
     height: 50
   },
@@ -171,14 +174,14 @@ export const Survey = ({ survey, reason }) => {
   });
 
   const createInitialSurveytitle = () => {
-    var object = "";
-    try {
-      object = dataState.data[1]['survey']['title']
-    }
-    catch {
-      object = ""
-    }
-    return object
+    // var object = "";
+    // try {
+    //   object = dataState.data[1]['survey']['title']
+    // }
+    // catch {
+    //   object = ""
+    // }
+    return ""
   }
 
   const createInitalAnswers = () => {
@@ -319,6 +322,26 @@ export const Survey = ({ survey, reason }) => {
     setKnowledge(val)
   }
 
+  const getRegionName = (title) => {
+    // const zone = title.split(" - ")[0]; 
+    let zone_text = ""
+    console.log(title)
+    
+    if (title.includes("RM")) {
+      zone_text = "del Gran Santiago"
+    }
+    else if (title.includes("SANTIAGO")) {
+      zone_text = "la comuna de Santiago"
+    } 
+    else if (title.includes("PROVIDENCIA-ÑUÑOA")) {
+      zone_text = "las comunas de  Providencia y Ñuñoa"
+    } 
+    else {
+      zone_text = "estos mapas"
+    }
+    return zone_text
+  }
+
   return (
     <React.Fragment>
       <Container
@@ -331,11 +354,11 @@ export const Survey = ({ survey, reason }) => {
               {i === currentquestion &&
                 <Container>
                   <Typography component="h1" variant="h3" align="center">
-                    {dataState.data[i]['survey']['title']}
+                  Encuesta: "Barrios de Santiago"
                   </Typography>
                   <LinearProgress variant="determinate" value={(i + 1) / (qty + 1) * 100} className={classes.progressBar} />
                   <Typography component="h1" variant="h5" align="center">
-                    Selecciona la imagen que mejor representa los barrios de la ciudad.
+                    Selecciona la imagen que mejor representa los barrios de {getRegionName(title)}.
                   </Typography>
                   <Grid key={i} container spacing={0}
                   >
@@ -490,9 +513,30 @@ export const Survey = ({ survey, reason }) => {
           </Container>
           <Container>
             {currentquestion === qty + 1 &&
-              <Typography component="h1" variant="h5" align="center">
-                Muchas gracias por su participación
-              </Typography>
+              <Container>
+                <Typography
+                  variant="h6"
+                  align="justify"
+                  component="p"
+                  className={classes.p}
+                >
+                  Muchas gracias por tu participación en el estudio “Barrios de Santiago” del Instituto Milenio Fundamento de los datos. ¡Tu participación será de mucha ayuda!
+                </Typography>
+                <Typography 
+                  component="h1" 
+                  variant="h6" 
+                  align="justify"
+                  component="p"
+                  className={classes.p}
+                >
+                  Si quieres colaborar más, puedes ayudarnos a difundir la encuesta en tus redes sociales o invitar a tus cercanos a participar.
+                  Te invitamos a seguir nuestras redes en <a href="https://www.facebook.com/Fundamentosdelosdatos">Facebook</a> y <a href="https://twitter.com/IMFDChile">Twitter</a>, 
+                  donde podrás conocer los resultados de esta y otros  estudios.
+                </Typography>
+                <Typography component="h1" variant="h5" align="center">
+                  ¡Un saludo!
+                </Typography>
+              </Container>
             }
           </Container>
         </div>
