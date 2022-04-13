@@ -53,6 +53,9 @@ const useStyles = makeStyles((theme) => ({
   },
   p: {
     padding: 10
+  },
+  h1: {
+    padding: 10
   }
 }));
 
@@ -62,15 +65,15 @@ export const Instructions = ({startSurvey}) => {
     <React.Fragment>
       <Container
         component="main"
-        maxWidth="lg"
+        maxWidth="sm"
+        className={classes.heroContent}
       >
         <Typography
           component="h1"
           variant="h3"
           align="center"
           color="textPrimary"
-          gutterBottom
-
+          className={classes.h1}
         >
           Instrucciones
         </Typography>
@@ -84,13 +87,13 @@ export const Instructions = ({startSurvey}) => {
           Los colores distinguen entre diferentes barrios: no tienen un significado en sí. Deberás hacer click en la imagen 
           que consideres representa mejor los barrios existentes en la zona. Esto es según tu experiencia y <b>no hay respuestas incorrectas</b>.
         </Typography>
-        <Typography
+        {/* <Typography
           variant="h6"
           align="justify"
           component="p"
           className={classes.p}>
           Ejemplo:
-        </Typography>
+        </Typography> */}
         <Typography
           variant="h6"
           align="justify"

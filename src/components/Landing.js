@@ -205,37 +205,37 @@ export const Landing = () => {
               Consentimiento Informado
             </Typography>
             <Container id="modal-modal-description">
-              <Typography  sx={{ mt: 2 }} component="p" className={classes.p}>
-              Usted ha sido invitado(a) a participar en la encuesta “<b>Barrios de Santiago</b>” del <b>Instituto Milenio Fundamento de los Datos</b>. 
+              <Typography  sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
+              Usted ha sido invitado(a) a participar en la encuesta “<b>Barrios de Santiago</b>” del <b>Instituto Milenio Fundamentos de los Datos</b>. 
               El objetivo es comparar algoritmos de detección de barrios en la ciudad. Para participar en esta estudio, es importante que considere la siguiente información:
               </Typography>
-              <Typography sx={{ mt: 2 }} component="p" className={classes.p}>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
               <b>Participación</b>: Su participación consistirá en responder un cuestionario web a través de la plataforma <a href="http://ciudades.imfd.cl">ciudades.imfd.cl</a>, 
               hospedada en servidores del instituto.
               La encuesta contempla que el informante identifique y seleccione entre pares de mapas aquel que piensa se ajusta de mejor modo a los barrios presentes en la zona.
               </Typography>
-              <Typography sx={{ mt: 2 }} component="p" className={classes.p}>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
               <b>Riesgos</b>: Las respuestas de los informantes, además de ser anónimas, no contienen datos privados o sensibles. 
               Por tanto, se considera que no existen riesgos asociados.
               </Typography>
-              <Typography sx={{ mt: 2 }} component="p" className={classes.p}>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
               <b>Beneficios</b>: Usted no recibirá ningún beneficio directo por participar en este estudio. 
               No obstante, su participación permitirá generar información valiosa para el desarrollo de tecnologías 
               de información geográfica, útiles para el desarrollo de políticas públicas territoriales.
               </Typography>
-              <Typography sx={{ mt: 2 }} component="p" className={classes.p}>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
               <b>Voluntariedad</b>: Su participación es absolutamente voluntaria. Usted tendrá la libertad de contestar las preguntas que desee, 
               como también de detener su participación en cualquier momento que lo desee. Esto no implicará ningún perjuicio para usted.
               </Typography>
-              <Typography sx={{ mt: 2 }} component="p" className={classes.p}>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
               <b>Confidencialidad</b>: Todas sus respuestas serán anónimas. Las presentaciones y publicaciones de este estudio, 
               no contendrán datos confidenciales de sus informantes.
               </Typography>
-              <Typography sx={{ mt: 2 }} component="p" className={classes.p}>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
               <b>Conocimiento de los resultados</b>: Usted tiene derecho a conocer los resultados de esta investigación. 
               Para ello, una vez estén listos podrá conocerlos directamente a través del sitio web <a href="http://ciudades.imfd.cl">ciudades.imfd.cl</a>.
               </Typography>
-              <Typography sx={{ mt: 2 }} component="p" className={classes.p}>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
               Si requiere mayor información, o comunicarse por cualquier motivo relacionado con este estudio, puede contactar a Naim Bro en el correo naim.bro@imfd.cl.
               </Typography>
             </Container>
