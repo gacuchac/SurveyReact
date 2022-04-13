@@ -2,18 +2,21 @@ import React, { useState, useEffect } from "react";
 import Header from "./framework/Header";
 import Footer from "./framework/Footer";
 import ConnectApi from "../api/ConnectApi";
+import Instructions from "./Instructions";
 import Survey from "./Survey";
 
 // MaterialUI
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
 import CardActions from "@material-ui/core/CardActions";
-import Grid from "@material-ui/core/Grid";
+import Modal from "@material-ui/core/Modal";
+import Box from "@material-ui/core/Box"
+// import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Checkbox, FormControlLabel, FormGroup, Slider } from "@material-ui/core";
+// import TextField from '@material-ui/core/TextField';
+// import Autocomplete from '@material-ui/lab/Autocomplete';
+// import { Checkbox, FormControlLabel, FormGroup, Slider } from "@material-ui/core";
 import { Alert, AlertTitle } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
@@ -56,6 +59,20 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  overflow:'scroll',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  maxHeight: '70%',
+  maxWidth: '75%',
+  boxShadow: 24,
+  p: 4,
+};
+
 export const Landing = () => {
   const classes = useStyles();
   const ROOT_API_URL = process.env.REACT_APP_ROOT_API_URL;
@@ -65,8 +82,13 @@ export const Landing = () => {
   const [chosenSurvey, setChosensurvey] = useState("");
   const [alert, setAlert] = useState(false);
   const [landing, setLanding] = useState(true);
+  const [instructions, setInstructions] = useState(false);
   const [knowledge, setKnowledge] = useState(5);
   const [reason, setReason] = useState({});
+  // Modal
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   
 
   useEffect(() => {
@@ -87,8 +109,19 @@ export const Landing = () => {
     //setRedirect("./respond/" + val);
   }; 
 
+  const showInstructions = () => {
+    setLanding(false)
+    setInstructions(true)
+    setAlert(false)
+    /* if (chosenSurvey === '') {
+      setAlert(true);
+      setLanding(true)
+     }*/
+  };
+
   const startSurvey = () => {
     setLanding(false)
+    setInstructions(false)
     setAlert(false)
     /* if (chosenSurvey === '') {
       setAlert(true);
@@ -122,33 +155,93 @@ export const Landing = () => {
         </Typography>
         <Typography
           variant="h6"
-          align="center"
+          align="justify"
           color="textSecondary"
           component="p"
           className={classes.p}
         >
-          Estamos buscando la mejor manera de identificar barrios. Ayúdanos respondiendo esta breve encuesta sobre la Región Metropolitana y comuna de Santiago.
+          Te damos la bienvenida a la encuesta “<b>Barrios de Santiago</b>” del Instituto Milenio Fundamentos de los Datos.
+          Este es un estudio académico que busca entender la forma en que se diferencian los barrios de Santiago de Chile y
+          sus comunas, y qué técnicas computacionales las predicen de mejor manera.
         </Typography>
         <Typography
           variant="h6"
-          align="center"
+          align="justify"
           color="textSecondary"
           component="p"
           className={classes.p}
         >
-          Es fácil: te vamos a mostrar dos formas de mapear la ciudad y comuna, y tú tienes que elegir la que te haga más sentido. Los barrios se identifican con colores. Cualquier comentario, consulta o sugerencia,
-          déjalos en el campo de comentarios.
+          El siguiente cuestionario tiene <b>X</b> preguntas, sin embargo, puedes terminar de responder cuando tú quieras
+          (haciendo click en “Finalizar encuesta”). Toda la información que nos puedas aportar será de gran ayuda.
         </Typography>
-        
         <Typography
           variant="h6"
-          align="center"
+          align="justify"
           color="textSecondary"
           component="p"
           className={classes.p}
         >
-          Agradecemos tu participación, es de mucha ayuda. Si aún quieres seguir ayudándonos, puedes compartir la encuesta.
+          Tus respuestas serán absolutamente anónimas, y los resultados podrás conocerlos más adelante a través de las 
+          redes del <a href="https://imfd.cl/en/">Instituto Milenio Fundamentos de los Datos</a>. 
         </Typography>
+        <Typography
+          variant="h6"
+          align="justify"
+          color="textSecondary"
+          component="p"
+          className={classes.p}
+        >
+          Selecciona el botón “<b>Comenzar encuesta</b>” si autorizas el uso de tus respuestas para nuestro análisis.
+        </Typography>
+        <Button onClick={handleOpen} color="secondary">Leer Consentimiento Informado</Button>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+          >
+          <Box sx={modalStyle}>
+            <Typography id="modal-modal-title" variant="h4" component="h2" className={classes.p}>
+              Consentimiento Informado
+            </Typography>
+            <Container id="modal-modal-description">
+              <Typography  sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
+              Usted ha sido invitado(a) a participar en la encuesta “<b>Barrios de Santiago</b>” del <b>Instituto Milenio Fundamentos de los Datos</b>. 
+              El objetivo es comparar algoritmos de detección de barrios en la ciudad. Para participar en esta estudio, es importante que considere la siguiente información:
+              </Typography>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
+              <b>Participación</b>: Su participación consistirá en responder un cuestionario web a través de la plataforma <a href="http://ciudades.imfd.cl">ciudades.imfd.cl</a>, 
+              hospedada en servidores del instituto.
+              La encuesta contempla que el informante identifique y seleccione entre pares de mapas aquel que piensa se ajusta de mejor modo a los barrios presentes en la zona.
+              </Typography>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
+              <b>Riesgos</b>: Las respuestas de los informantes, además de ser anónimas, no contienen datos privados o sensibles. 
+              Por tanto, se considera que no existen riesgos asociados.
+              </Typography>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
+              <b>Beneficios</b>: Usted no recibirá ningún beneficio directo por participar en este estudio. 
+              No obstante, su participación permitirá generar información valiosa para el desarrollo de tecnologías 
+              de información geográfica, útiles para el desarrollo de políticas públicas territoriales.
+              </Typography>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
+              <b>Voluntariedad</b>: Su participación es absolutamente voluntaria. Usted tendrá la libertad de contestar las preguntas que desee, 
+              como también de detener su participación en cualquier momento que lo desee. Esto no implicará ningún perjuicio para usted.
+              </Typography>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
+              <b>Confidencialidad</b>: Todas sus respuestas serán anónimas. Las presentaciones y publicaciones de este estudio, 
+              no contendrán datos confidenciales de sus informantes.
+              </Typography>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
+              <b>Conocimiento de los resultados</b>: Usted tiene derecho a conocer los resultados de esta investigación. 
+              Para ello, una vez estén listos podrá conocerlos directamente a través del sitio web <a href="http://ciudades.imfd.cl">ciudades.imfd.cl</a>.
+              </Typography>
+              <Typography sx={{ mt: 2 }} component="p" className={classes.p} align='justify'>
+              Si requiere mayor información, o comunicarse por cualquier motivo relacionado con este estudio, puede contactar a Naim Bro en el correo naim.bro@imfd.cl.
+              </Typography>
+            </Container>
+            
+          </Box>
+        </Modal>
       </Container>
      {/*  <Grid container spacing={3} >
         <Grid item xs={4}>
@@ -197,7 +290,7 @@ export const Landing = () => {
             fullWidth
             variant="outlined"
             color="primary"
-            onClick={() => startSurvey()}
+            onClick={() => showInstructions()}
           >
             Comenzar Encuesta
           </Button>
@@ -210,8 +303,11 @@ export const Landing = () => {
       </Container>
       </Container>
       }
+      { instructions &&
+        <Instructions startSurvey={startSurvey}></Instructions>
+      }
       {/* {!landing && <Survey survey={chosenSurvey} knowledge={knowledge} reason={reason}/>} */
-      !landing && <Survey survey={'Encuesta RM y Santiago'} reason={''}/>
+      !landing && !instructions && <Survey survey={'Encuesta RM y Santiago'} reason={''}/>
       }
       
       <Footer />
