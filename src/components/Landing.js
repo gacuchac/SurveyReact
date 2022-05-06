@@ -14,10 +14,9 @@ import Box from "@material-ui/core/Box"
 // import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-// import TextField from '@material-ui/core/TextField';
-// import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
 // import { Checkbox, FormControlLabel, FormGroup, Slider } from "@material-ui/core";
-import { Alert, AlertTitle } from "@material-ui/lab";
+import { Alert, AlertTitle, Autocomplete } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   "@global": {
@@ -99,8 +98,7 @@ export const Landing = () => {
   
   const createInitialsurveys = () => {
     var object = []
-    dataState.data.map((q, i) => (object.push(q.title)))
-
+    dataState.data.map((q, i) => (object.push(q.title=='Providencia-Nunoa'? 'Providencia-Ñuñoa' : q.title )))
     return object
   };
 
@@ -171,7 +169,7 @@ export const Landing = () => {
           component="p"
           className={classes.p}
         >
-          El siguiente cuestionario tiene <b>X</b> preguntas, sin embargo, puedes terminar de responder cuando tú quieras
+          El siguiente cuestionario tiene <b>30</b> preguntas, sin embargo, puedes terminar de responder cuando tú quieras
           (haciendo click en “Finalizar encuesta”). Toda la información que nos puedas aportar será de gran ayuda.
         </Typography>
         <Typography
@@ -184,6 +182,7 @@ export const Landing = () => {
           Tus respuestas serán absolutamente anónimas, y los resultados podrás conocerlos más adelante a través de las 
           redes del <a href="https://imfd.cl/en/">Instituto Milenio Fundamentos de los Datos</a>. 
         </Typography>
+        <Button onClick={handleOpen} color="secondary">Leer Consentimiento Informado</Button>
         <Typography
           variant="h6"
           align="justify"
@@ -193,7 +192,6 @@ export const Landing = () => {
         >
           Selecciona el botón “<b>Comenzar encuesta</b>” si autorizas el uso de tus respuestas para nuestro análisis.
         </Typography>
-        <Button onClick={handleOpen} color="secondary">Leer Consentimiento Informado</Button>
         <Modal
           open={open}
           onClose={handleClose}
@@ -243,8 +241,7 @@ export const Landing = () => {
           </Box>
         </Modal>
       </Container>
-     {/*  <Grid container spacing={3} >
-        <Grid item xs={4}>
+        <Container item xs={4}>
           <Autocomplete
           disablePortal
           id="comunas"
@@ -253,9 +250,8 @@ export const Landing = () => {
           renderInput={(params) => <TextField {...params} label="¿En qué comuna desea participar?" />}
           onChange={(e, value) => chooseSurvey(value)}
           />
-        </Grid>
         
-        <Grid item xs={4}>
+        {/**<Grid item xs={4}>
           <Typography id="discrete-slider" gutterBottom>
           En una escala de 0 a 10
           ¿Qué tanto conoces esa comuna?
@@ -282,8 +278,8 @@ export const Landing = () => {
             <FormControlLabel control={<Checkbox onChange={(e, value) => handleReason(value, "Trabajo en dicha comuna")}/>} label="Trabajo en dicha comuna" />
             <FormControlLabel control={<Checkbox onChange={(e, value) => handleReason(value, "Otro")}/>} label="Otro" />
           </FormGroup>
-        </Grid>
-      </Grid> */}
+        </Grid> */}
+      </Container>
       <Container>
         <CardActions>
           <Button
@@ -307,7 +303,7 @@ export const Landing = () => {
         <Instructions startSurvey={startSurvey}></Instructions>
       }
       {/* {!landing && <Survey survey={chosenSurvey} knowledge={knowledge} reason={reason}/>} */
-      !landing && !instructions && <Survey survey={'Encuesta RM y Santiago'} reason={''}/>
+      !landing && !instructions && <Survey survey={chosenSurvey=='Providencia-Ñuñoa'? 'Providencia-Nunoa' : chosenSurvey} reason={''}/>
       }
       
       <Footer />
